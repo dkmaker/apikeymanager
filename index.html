@@ -1,1 +1,26 @@
-<html><body><p>APT repo initialising — check back after the first workflow run.</p></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><title>op-keysync APT repository</title>
+<style>
+  body { font-family: monospace; max-width: 800px; margin: 3em auto; padding: 0 1em; }
+  pre  { background: #f4f4f4; padding: 1em; overflow-x: auto; }
+  h1   { font-size: 1.4em; }
+</style>
+</head>
+<body>
+<h1>op-keysync APT repository</h1>
+<p>Install with:</p>
+<pre>
+# 1. Add the GPG key
+curl -fsSL https://dkmaker.github.io/apikeymanager/gpg.key | sudo gpg --dearmor -o /usr/share/keyrings/op-keysync.gpg
+
+# 2. Add the repository
+echo "deb [arch=all signed-by=/usr/share/keyrings/op-keysync.gpg] https://dkmaker.github.io/apikeymanager stable main"   | sudo tee /etc/apt/sources.list.d/op-keysync.list
+
+# 3. Install
+sudo apt update
+sudo apt install op-keysync
+</pre>
+<p>Source: <a href="https://github.com/dkmaker/apikeymanager">https://github.com/dkmaker/apikeymanager</a></p>
+</body>
+</html>

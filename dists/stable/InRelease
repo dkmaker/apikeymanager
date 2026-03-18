@@ -1,0 +1,34 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+Origin: op-keysync
+Label: op-keysync
+Suite: stable
+Codename: stable
+Version: 1.0
+Architectures: all
+Components: main
+Description: op-keysync APT repository
+Date: Wed, 18 Mar 2026 16:41:48 +0000
+MD5Sum:
+ bac189cf07b5819f0eb682aa94ccb56c 1100 main/binary-all/Packages
+ fdb6f43a90e3e76b07bc0e49a8854e9b 712 main/binary-all/Packages.gz
+SHA256:
+ 3c6f8582f560131c1c689f5aca89c51d6076f5d03add4d27316b1942bce14f4c 1100 main/binary-all/Packages
+ ee982e4369e7c1f547f0341589e62e00e8ef791377e26b218acee47bbc08dbd2 712 main/binary-all/Packages.gz
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEuniwCTNzZlwHamopvCnCYPbjltcFAmm61c0ACgkQvCnCYPbj
+ltevOhAAlhWq8lXfTBwyXPYR7jce6uBNwUoT+eTEdMgibcTcR6It/zXOn876Gh/5
+QuO2gNaXSvfMXFrP1VQOjwGC+t1/YUomrmIPusoMGlwmxVw0zMYe1tWuSmV8Y/LZ
+mP0tRoTbdY1NScvTbjSgv78dm+XTwzkLKUBD2jRCZE2jQ/4F1KFUv+/CB/wPNEEh
+rXW7wiuykUbsZJkfH5pQYIPPC9qWTE3Iv/gv5MIboQSl8Fln4VPxWGmvQPwG57dK
+pDrE5dKdO+0fCAu7JM+4gOx/DBThHFt4AvA/pB8vtOQngzn8eTplbEy5grsf7sHO
+KX4kNjEjhuUfwA1coSVJQcc1AJRnfwQD8ADAo7Iwz5and7/Jbb8/HV1HNMqi8dPt
+nF5XKjd3OjG1RHyGWI63TwTJwDHEjYqbnthxe6a/7R9QtcsDT6z3FyYdNn83FEdy
+o/yJPB50wHmzi0AKK0T0YX8D7WFomU8r52euNpvSVfD4QWm2WluqyNeIl8T5Aj8L
+9F5nDf/7nnWIlO+iYTO9CNPF5h+IOyrwn3n4SRo2TfM3RCfcIBB+v2tmMlRSciRx
+5sb2OUsJ4CvP/RfAQf/GYYaq7hr57eYS7Xki0FVQLnmdMWkO/hOiGYy42FuudIpf
+xxOF+WM9sTf+2lstycPJ9U+0PDOsAVO9fBBucGL5ZCNMGW4bd10=
+=u5dw
+-----END PGP SIGNATURE-----

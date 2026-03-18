@@ -1,0 +1,15 @@
+Origin: op-keysync
+Label: op-keysync
+Suite: stable
+Codename: stable
+Version: 1.0
+Architectures: all
+Components: main
+Description: op-keysync APT repository
+Date: Wed, 18 Mar 2026 16:41:48 +0000
+MD5Sum:
+ bac189cf07b5819f0eb682aa94ccb56c 1100 main/binary-all/Packages
+ fdb6f43a90e3e76b07bc0e49a8854e9b 712 main/binary-all/Packages.gz
+SHA256:
+ 3c6f8582f560131c1c689f5aca89c51d6076f5d03add4d27316b1942bce14f4c 1100 main/binary-all/Packages
+ ee982e4369e7c1f547f0341589e62e00e8ef791377e26b218acee47bbc08dbd2 712 main/binary-all/Packages.gz
