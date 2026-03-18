@@ -1,0 +1,61 @@
+#!/bin/bash
+set -e
+
+# Make the launcher executable
+chmod +x /usr/bin/op-keysync
+chmod +x /usr/share/op-keysync/op-keysync.py
+
+# ── Per-user setup ────────────────────────────────────────────────────────────
+# When installed via `sudo apt install`, SUDO_USER is the real user.
+# Fall back to USER if SUDO_USER is unset (e.g. root install in CI).
+REAL_USER="${SUDO_USER:-${USER:-}}"
+
+if [[ -z "$REAL_USER" || "$REAL_USER" == "root" ]]; then
+    echo "op-keysync: skipping per-user setup (no non-root user detected)."
+    echo "  Run as your regular user to set up shell hooks and autostart:"
+    echo "  op-keysync-setup"
+    exit 0
+fi
+
+REAL_HOME=$(getent passwd "$REAL_USER" | cut -d: -f6)
+
+if [[ -z "$REAL_HOME" || ! -d "$REAL_HOME" ]]; then
+    echo "op-keysync: could not find home directory for $REAL_USER — skipping per-user setup."
+    exit 0
+fi
+
+HOOK_LINE="source /usr/share/op-keysync/op-keysync-shell.sh  # op-keysync"
+
+# ── Shell hook — add to .zshrc and .bashrc if present ────────────────────────
+for RC in "$REAL_HOME/.zshrc" "$REAL_HOME/.bashrc"; do
+    if [[ -f "$RC" ]]; then
+        if ! grep -q "op-keysync-shell.sh" "$RC"; then
+            echo "" >> "$RC"
+            echo "# op-keysync — 1Password API key sync shell hook" >> "$RC"
+            echo "$HOOK_LINE" >> "$RC"
+            echo "op-keysync: added shell hook to $RC"
+        else
+            echo "op-keysync: shell hook already present in $RC — skipping."
+        fi
+    fi
+done
+
+# ── Autostart — copy desktop file to user's autostart dir ────────────────────
+AUTOSTART_DIR="$REAL_HOME/.config/autostart"
+mkdir -p "$AUTOSTART_DIR"
+AUTOSTART_FILE="$AUTOSTART_DIR/op-keysync.desktop"
+
+if [[ ! -f "$AUTOSTART_FILE" ]]; then
+    cp /usr/share/applications/op-keysync.desktop "$AUTOSTART_FILE"
+    chown "$REAL_USER:" "$AUTOSTART_FILE"
+    echo "op-keysync: autostart entry created at $AUTOSTART_FILE"
+else
+    echo "op-keysync: autostart entry already exists — skipping."
+fi
+
+echo ""
+echo "op-keysync installed. Restart your shell or run:"
+echo "  source /usr/share/op-keysync/op-keysync-shell.sh"
+echo "Then launch '1Password Key Sync' from your app menu."
+
+exit 0

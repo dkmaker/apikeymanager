@@ -1,0 +1,8 @@
+op-keysync (1.0.0-1) stable; urgency=medium
+
+  * Initial release.
+  * GNOME tray app for syncing 1Password API keys to shell sessions.
+  * Automatic purge on screen lock and idle timeout.
+  * Shell hook for bash and zsh.
+
+ -- op-keysync maintainer <noreply@github.com>  Wed, 18 Mar 2026 17:17:19 +0100

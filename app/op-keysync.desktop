@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=1Password Key Sync
+Comment=Sync 1Password API keys to shell sessions (in-memory, lock-aware)
+Exec=/usr/bin/op-keysync
+Icon=dialog-password
+Type=Application
+Categories=Utility;Security;
+StartupNotify=false
+X-GNOME-Autostart-enabled=true

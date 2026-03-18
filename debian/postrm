@@ -1,0 +1,36 @@
+#!/bin/bash
+set -e
+
+# Only clean up on full removal (not on upgrade)
+if [[ "$1" != "remove" && "$1" != "purge" ]]; then
+    exit 0
+fi
+
+REAL_USER="${SUDO_USER:-${USER:-}}"
+if [[ -z "$REAL_USER" || "$REAL_USER" == "root" ]]; then
+    exit 0
+fi
+
+REAL_HOME=$(getent passwd "$REAL_USER" | cut -d: -f6)
+if [[ -z "$REAL_HOME" || ! -d "$REAL_HOME" ]]; then
+    exit 0
+fi
+
+# ── Remove shell hook lines from .zshrc and .bashrc ──────────────────────────
+for RC in "$REAL_HOME/.zshrc" "$REAL_HOME/.bashrc"; do
+    if [[ -f "$RC" ]] && grep -q "op-keysync-shell.sh" "$RC"; then
+        # Remove the comment line and the source line
+        sed -i '/# op-keysync — 1Password API key sync shell hook/d' "$RC"
+        sed -i '/op-keysync-shell.sh/d' "$RC"
+        echo "op-keysync: removed shell hook from $RC"
+    fi
+done
+
+# ── Remove autostart entry ────────────────────────────────────────────────────
+AUTOSTART_FILE="$REAL_HOME/.config/autostart/op-keysync.desktop"
+if [[ -f "$AUTOSTART_FILE" ]]; then
+    rm -f "$AUTOSTART_FILE"
+    echo "op-keysync: removed autostart entry"
+fi
+
+exit 0

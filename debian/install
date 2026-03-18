@@ -1,0 +1,4 @@
+app/op-keysync.py             usr/share/op-keysync/
+app/op-keysync-shell.sh       usr/share/op-keysync/
+app/op-keysync.desktop        usr/share/applications/
+scripts/op-keysync            usr/bin/

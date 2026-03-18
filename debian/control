@@ -1,0 +1,32 @@
+Source: op-keysync
+Section: utils
+Priority: optional
+Maintainer: op-keysync maintainer <noreply@github.com>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.6.2
+Homepage: https://github.com/dkmaker/apikeymanager
+
+Package: op-keysync
+Architecture: all
+Depends:
+ python3 (>= 3.10),
+ python3-gi,
+ gir1.2-gtk-3.0,
+ gir1.2-ayatanaappindicator3-0.1,
+ python3-dbus,
+ python3-cryptography,
+ socat,
+ wl-clipboard,
+ libnotify-bin
+Recommends:
+ 1password-cli
+Description: 1Password API key sync tray app for GNOME
+ Fetches API keys from a 1Password vault and injects them as environment
+ variables into local shell sessions — entirely in RAM, never written to disk.
+ .
+ Features:
+  - Automatic purge on screen lock and after 60 minutes idle
+  - Re-fetches from 1Password on unlock / activity resume
+  - Clipboard copy with 20-second auto-clear
+  - SSH sessions are denied the keys entirely
+  - GNOME tray icon showing sync/lock state

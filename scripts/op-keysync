@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# Launcher wrapper — installed to /usr/bin/op-keysync by the .deb
+exec python3 /usr/share/op-keysync/op-keysync.py "$@"

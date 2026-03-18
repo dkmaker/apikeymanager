@@ -1,0 +1,162 @@
+name: Build and publish APT repository
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'app/**'
+      - 'scripts/**'
+      - 'debian/**'
+      - '.github/workflows/apt-repo.yml'
+  workflow_dispatch:   # allow manual trigger from GitHub UI
+
+permissions:
+  contents: write      # needed to push to gh-pages branch
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      # ── Checkout ─────────────────────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── Build .deb ────────────────────────────────────────────────────────────
+      - name: Build .deb package
+        run: bash scripts/build-deb.sh
+
+      # ── Import GPG signing key ─────────────────────────────────────────────────
+      - name: Import GPG key
+        run: |
+          echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --batch --import
+          # Get the key fingerprint for later use
+          echo "GPG_FINGERPRINT=$(gpg --list-secret-keys --with-colons | awk -F: '/^fpr/{print $10; exit}')" >> $GITHUB_ENV
+
+      # ── Checkout / prepare gh-pages branch ───────────────────────────────────
+      - name: Checkout gh-pages
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: gh-pages
+          # Create the branch if it doesn't exist yet
+          fetch-depth: 0
+
+      - name: Prepare APT repo directory structure
+        run: |
+          mkdir -p gh-pages/pool/main
+          mkdir -p gh-pages/dists/stable/main/binary-all
+
+      # ── Copy new .deb into pool ────────────────────────────────────────────────
+      - name: Copy .deb to pool
+        run: |
+          # Copy the newly built .deb; old versions are kept for apt upgrade history
+          cp build/*.deb gh-pages/pool/main/
+
+      # ── Generate APT repo metadata ────────────────────────────────────────────
+      - name: Generate Packages index
+        run: |
+          cd gh-pages
+          dpkg-scanpackages --arch all pool/main /dev/null > dists/stable/main/binary-all/Packages
+          gzip -9kf dists/stable/main/binary-all/Packages
+
+      - name: Generate Release file
+        run: |
+          cd gh-pages
+          REPO_URL="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}"
+          cat > dists/stable/Release <<EOF
+          Origin: op-keysync
+          Label: op-keysync
+          Suite: stable
+          Codename: stable
+          Version: 1.0
+          Architectures: all
+          Components: main
+          Description: op-keysync APT repository
+          Date: $(date -Ru)
+          EOF
+
+          # Append checksums for all index files
+          echo "MD5Sum:" >> dists/stable/Release
+          for f in dists/stable/main/binary-all/Packages dists/stable/main/binary-all/Packages.gz; do
+            echo " $(md5sum $f | cut -d' ' -f1) $(wc -c < $f | tr -d ' ') ${f#dists/stable/}" >> dists/stable/Release
+          done
+          echo "SHA256:" >> dists/stable/Release
+          for f in dists/stable/main/binary-all/Packages dists/stable/main/binary-all/Packages.gz; do
+            echo " $(sha256sum $f | cut -d' ' -f1) $(wc -c < $f | tr -d ' ') ${f#dists/stable/}" >> dists/stable/Release
+          done
+
+      # ── GPG sign the Release file ─────────────────────────────────────────────
+      - name: Sign Release file
+        env:
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        run: |
+          cd gh-pages
+          # Detached signature (Release.gpg) + inline signed (InRelease)
+          echo "$GPG_PASSPHRASE" | gpg --batch --yes --passphrase-fd 0 \
+            --pinentry-mode loopback \
+            --default-key "$GPG_FINGERPRINT" \
+            --armor --detach-sign \
+            --output dists/stable/Release.gpg \
+            dists/stable/Release
+
+          echo "$GPG_PASSPHRASE" | gpg --batch --yes --passphrase-fd 0 \
+            --pinentry-mode loopback \
+            --default-key "$GPG_FINGERPRINT" \
+            --armor --clearsign \
+            --output dists/stable/InRelease \
+            dists/stable/Release
+
+      # ── Export public key for users ───────────────────────────────────────────
+      - name: Export public GPG key
+        run: |
+          gpg --armor --export "$GPG_FINGERPRINT" > gh-pages/gpg.key
+
+      # ── Generate a simple index.html ─────────────────────────────────────────
+      - name: Generate index.html
+        run: |
+          REPO="${{ github.repository }}"
+          OWNER="${{ github.repository_owner }}"
+          REPO_NAME="${{ github.event.repository.name }}"
+          BASE_URL="https://${OWNER}.github.io/${REPO_NAME}"
+
+          cat > gh-pages/index.html <<EOF
+          <!DOCTYPE html>
+          <html lang="en">
+          <head><meta charset="UTF-8"><title>op-keysync APT repository</title>
+          <style>
+            body { font-family: monospace; max-width: 800px; margin: 3em auto; padding: 0 1em; }
+            pre  { background: #f4f4f4; padding: 1em; overflow-x: auto; }
+            h1   { font-size: 1.4em; }
+          </style>
+          </head>
+          <body>
+          <h1>op-keysync APT repository</h1>
+          <p>Install with:</p>
+          <pre>
+          # 1. Add the GPG key
+          curl -fsSL ${BASE_URL}/gpg.key | sudo gpg --dearmor -o /usr/share/keyrings/op-keysync.gpg
+
+          # 2. Add the repository
+          echo "deb [arch=all signed-by=/usr/share/keyrings/op-keysync.gpg] ${BASE_URL} stable main" \
+            | sudo tee /etc/apt/sources.list.d/op-keysync.list
+
+          # 3. Install
+          sudo apt update
+          sudo apt install op-keysync
+          </pre>
+          <p>Source: <a href="https://github.com/${REPO}">https://github.com/${REPO}</a></p>
+          </body>
+          </html>
+          EOF
+
+      # ── Commit and push gh-pages ───────────────────────────────────────────────
+      - name: Commit and push APT repo
+        run: |
+          cd gh-pages
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet && echo "No changes to publish." && exit 0
+          git commit -m "APT repo: update package $(date -u '+%Y-%m-%d %H:%M UTC')"
+          git push origin gh-pages
