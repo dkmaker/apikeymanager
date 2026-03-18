@@ -38,6 +38,32 @@ from threading import RLock
 
 from cryptography.fernet import Fernet
 
+# ── Startup dependency check ───────────────────────────────────────────────────
+
+def _check_dependencies() -> list[str]:
+    """
+    Check all runtime dependencies exist before starting the app.
+    Returns a list of missing dependency descriptions (empty = all good).
+    """
+    import shutil
+    missing = []
+    deps = [
+        ("op",          "1Password CLI — install from https://developer.1password.com/docs/cli/get-started/"),
+        ("wl-copy",     "wl-clipboard — sudo apt install wl-clipboard"),
+        ("socat",       "socat — sudo apt install socat"),
+        ("notify-send", "libnotify-bin — sudo apt install libnotify-bin"),
+    ]
+    for cmd, description in deps:
+        if shutil.which(cmd) is None:
+            missing.append(f"  • {cmd}: {description}")
+    return missing
+
+_missing_deps = _check_dependencies()
+if _missing_deps:
+    import sys
+    print("op-keysync: missing required dependencies:\n" + "\n".join(_missing_deps), file=sys.stderr)
+    # Don't exit — show the error in the tray so the user can see it without a terminal
+
 # ── Debug logging ──────────────────────────────────────────────────────────────
 _LOG_DIR = os.path.expanduser("~/.local/share/op-keysync")
 os.makedirs(_LOG_DIR, exist_ok=True)
@@ -127,12 +153,25 @@ def fetch_from_1password() -> tuple[dict[str, str], str | None]:
     Each item needs an `env` field (env var name) and a `credential` field (secret value).
     Returns (dict of env_name→value, error_string or None).
     """
-    r = subprocess.run(
-        ["op", "item", "list", "--vault", "Exports", "--format", "json"],
-        capture_output=True, text=True
-    )
+    try:
+        r = subprocess.run(
+            ["op", "item", "list", "--vault", "Exports", "--format", "json"],
+            capture_output=True, text=True
+        )
+    except FileNotFoundError:
+        return {}, (
+            "1Password CLI (op) not found.\n"
+            "Install it from: https://developer.1password.com/docs/cli/get-started/"
+        )
+
     if r.returncode != 0:
-        return {}, r.stderr.strip() or "op item list failed"
+        stderr = r.stderr.strip()
+        # Friendly message for the most common auth failure
+        if "not currently signed in" in stderr or "authentication" in stderr.lower():
+            return {}, "Not signed in to 1Password — run: op signin"
+        if "no such vault" in stderr.lower() or "vault" in stderr.lower():
+            return {}, "Vault 'Exports' not found — create it in 1Password first"
+        return {}, stderr or "op item list failed (unknown error)"
 
     try:
         items = json.loads(r.stdout)
@@ -141,12 +180,17 @@ def fetch_from_1password() -> tuple[dict[str, str], str | None]:
 
     results = {}
     for item in items:
-        r2 = subprocess.run(
-            ["op", "item", "get", item["id"],
-             "--vault", "Exports", "--format", "json"],
-            capture_output=True, text=True
-        )
+        try:
+            r2 = subprocess.run(
+                ["op", "item", "get", item["id"],
+                 "--vault", "Exports", "--format", "json"],
+                capture_output=True, text=True
+            )
+        except FileNotFoundError:
+            return {}, "1Password CLI (op) not found"
+
         if r2.returncode != 0:
+            log.warning("Could not fetch item %s: %s", item.get("title", "?"), r2.stderr.strip())
             continue
         try:
             detail = json.loads(r2.stdout)
@@ -162,6 +206,9 @@ def fetch_from_1password() -> tuple[dict[str, str], str | None]:
         )
         if env_name and cred_value:
             results[env_name] = cred_value
+        elif env_name and not cred_value:
+            log.warning("Item '%s' has 'env' field but no 'credential' field — skipping",
+                        item.get("title", "?"))
 
     return results, None
 
@@ -205,6 +252,10 @@ class OpKeysyncApp:
         self._clipboard_timer   = None    # GLib timer source id
         # Protects _enc_keys and _locked — accessed from both GTK thread and socket thread
         self._secrets_lock  = RLock()
+
+        # Surface missing dependencies in tray immediately
+        if _missing_deps:
+            self._last_error = "Missing deps — see tray menu"
 
         # Write initial runtime state
         _write_state("unlocked")
@@ -425,6 +476,20 @@ class OpKeysyncApp:
             clip_note.set_sensitive(False)
             self._menu.append(clip_note)
 
+        # ── Missing dependencies warning ──────────────────────────────────────
+        if _missing_deps:
+            self._menu.append(Gtk.SeparatorMenuItem())
+            warn_item = Gtk.MenuItem(label="⚠️  Missing dependencies:")
+            warn_item.set_sensitive(False)
+            self._menu.append(warn_item)
+            for dep_line in _missing_deps:
+                # dep_line is "  • cmd: install hint"
+                cmd = dep_line.strip().lstrip("• ").split(":")[0]
+                hint = dep_line.split(":", 1)[1].strip() if ":" in dep_line else dep_line
+                dep_item = Gtk.MenuItem(label=f"  {cmd}  —  {hint}")
+                dep_item.set_sensitive(False)
+                self._menu.append(dep_item)
+
         self._menu.append(Gtk.SeparatorMenuItem())
 
         # ── Keys — hover to expand submenu, copy value or KEY=VALUE ─────────
@@ -508,12 +573,18 @@ class OpKeysyncApp:
         try:
             subprocess.run(["wl-copy"], input=text, text=True, check=True)
             log.debug("COPY wl-copy (CLIPBOARD) done")
+        except FileNotFoundError:
+            log.error("wl-copy not found — install wl-clipboard: sudo apt install wl-clipboard")
+            self._notify("⚠️ wl-clipboard not installed — sudo apt install wl-clipboard")
+            return
         except Exception as e:
             log.error("COPY wl-copy (CLIPBOARD) FAILED: %s", e)
 
         try:
             subprocess.run(["wl-copy", "--primary"], input=text, text=True, check=True)
             log.debug("COPY wl-copy (PRIMARY) done")
+        except FileNotFoundError:
+            pass  # PRIMARY clipboard optional — CLIPBOARD already copied above
         except Exception as e:
             log.error("COPY wl-copy (PRIMARY) FAILED: %s", e)
 
@@ -559,6 +630,8 @@ class OpKeysyncApp:
             subprocess.run(["wl-copy", "--clear"], check=True)
             subprocess.run(["wl-copy", "--clear", "--primary"], check=True)
             log.debug("CLIPBOARD_CLEAR done — clipboard+primary cleared")
+        except FileNotFoundError:
+            log.error("wl-copy not found — clipboard was not cleared")
         except Exception as e:
             log.error("CLIPBOARD_CLEAR FAILED: %s", e)
         self._update_icon()
@@ -580,10 +653,13 @@ class OpKeysyncApp:
 
     def _notify(self, body: str):
         def _send():
-            subprocess.run([
-                "notify-send", "-u", "normal", "-t", "4000",
-                "1Password Key Sync", body,
-            ], check=False)
+            try:
+                subprocess.run([
+                    "notify-send", "-u", "normal", "-t", "4000",
+                    "1Password Key Sync", body,
+                ], check=False)
+            except FileNotFoundError:
+                log.warning("notify-send not found — install libnotify-bin: sudo apt install libnotify-bin")
         threading.Thread(target=_send, daemon=True).start()
 
     def run(self):
