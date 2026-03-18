@@ -250,6 +250,7 @@ class OpKeysyncApp:
         self._last_error: str | None = None
         self._clipboard_active  = False
         self._clipboard_timer   = None    # GLib timer source id
+        self._current_icon: str | None = None   # track active icon path to avoid redundant redraws
         # Protects _enc_keys and _locked — accessed from both GTK thread and socket thread
         self._secrets_lock  = RLock()
 
@@ -549,7 +550,10 @@ class OpKeysyncApp:
             icon, tip = ICONS["green"],   f"{len(self._key_names)} keys loaded"
         else:
             icon, tip = ICONS["grey"],    "No keys — use Full Sync"
-        self._indicator.set_icon_full(icon, tip)
+        # Only call set_icon_full when the icon actually changes — avoids tray flash on redraw
+        if icon != self._current_icon:
+            self._current_icon = icon
+            self._indicator.set_icon_full(icon, tip)
 
     # ── Clipboard ──────────────────────────────────────────────────────────────
 
