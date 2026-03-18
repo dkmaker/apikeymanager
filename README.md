@@ -59,27 +59,28 @@ Then launch **1Password Key Sync** from your GNOME app menu.
 
 ## Architecture
 
-```
-┌─────────────────────────────────────┐
-│  op-keysync (tray app, Python)      │
-│                                     │
-│  ┌───────────┐  ┌────────────────┐  │
-│  │ Fernet    │  │ D-Bus          │  │
-│  │ encrypted │  │ lock/unlock    │  │
-│  │ secrets   │  │ + idle monitor │  │
-│  └───────────┘  └────────────────┘  │
-│         │                │          │
-│  ┌──────┴──────┐   /run/user/UID/  │
-│  │ Unix socket │   op-keysync/     │
-│  │ server      │   {state,version} │
-│  └──────┬──────┘                   │
-└─────────┼───────────────────────────┘
-          │
-    ┌─────┴──────────────────────┐
-    │  Shell hook (LOCAL only)   │
-    │  precmd / PROMPT_COMMAND   │
-    │  $SSH_CONNECTION → denied  │
-    └────────────────────────────┘
+```mermaid
+graph TD
+    OP[1Password CLI<br/><code>op</code>] -->|fetch vault items| SYNC
+
+    subgraph App["op-keysync — GNOME tray app"]
+        SYNC[Sync engine] -->|encrypt with Fernet| MEM[(In-memory<br/>encrypted secrets)]
+        MEM --> SOCK[Unix socket server<br/><code>/run/user/UID/op-keysync/sock</code>]
+        DBUS[D-Bus listener<br/>ScreenSaver + Mutter IdleMonitor] -->|lock / idle| PURGE[Purge secrets<br/>bump version]
+        DBUS -->|unlock / resume| SYNC
+        PURGE --> MEM
+    end
+
+    SOCK -->|export KEY=value| HOOK
+    RUNDIR[("<code>/run/user/UID/op-keysync/</code><br/>state · version")] -->|version changed?| HOOK
+
+    subgraph Shell["Shell hook  (bash / zsh)"]
+        HOOK[precmd / PROMPT_COMMAND<br/>checks version file on every prompt]
+        HOOK -->|locked| UNSET[unset tracked vars]
+        HOOK -->|unlocked + new version| SOCAT[socat → socket<br/>export vars into shell]
+    end
+
+    SSH{{SSH session?}} -->|yes — skip entirely| HOOK
 ```
 
 ## Troubleshooting
