@@ -2,14 +2,14 @@ Package: op-keysync
 Version: 1.0.0-1
 Architecture: all
 Maintainer: op-keysync maintainer <noreply@github.com>
-Installed-Size: 60
+Installed-Size: 64
 Depends: python3 (>= 3.10), python3-gi, gir1.2-gtk-3.0, gir1.2-ayatanaappindicator3-0.1, python3-dbus, python3-cryptography, socat, wl-clipboard, libnotify-bin
 Recommends: 1password-cli
 Filename: pool/main/op-keysync_1.0.0-1_all.deb
-Size: 9742
-MD5sum: 89726d4553565eda423966113c37fb03
-SHA1: d0533be9df6aa26cd18583aa544fd2079608e0d7
-SHA256: efd8c418549989b54619ee8c212dd5a7423d2e722d1644997a53d4c7604ff7e6
+Size: 10694
+MD5sum: c26e6802d756dc8951736a373e6d5074
+SHA1: f4a68dc8efd86c8537adb79d0e8675a91e2dcd42
+SHA256: 28c2c88e91d1572159ef615cabc73934ec291ab59fcdae1e37d451db1d32cc66
 Section: utils
 Priority: optional
 Homepage: https://github.com/dkmaker/apikeymanager
