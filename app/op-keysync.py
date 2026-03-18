@@ -567,15 +567,27 @@ class OpKeysyncApp:
             except Exception:
                 return {}
 
+    def _wl_copy_env(self) -> dict:
+        """
+        Return an env dict for wl-copy subprocesses with GNOME launch-tracking
+        vars removed. Without this, GNOME Shell briefly shows wl-copy in the
+        app dock every time it's spawned (the flash the user sees).
+        """
+        env = os.environ.copy()
+        for key in ("GIO_LAUNCHED_DESKTOP_FILE", "GIO_LAUNCHED_DESKTOP_FILE_PID"):
+            env.pop(key, None)
+        return env
+
     def _copy_to_clipboard(self, text: str):
         """Copy text to clipboard via wl-copy (stdin — value not in process list).
-        Clipboard auto-clears after 60 seconds via timer.
+        Clipboard auto-clears after 20 seconds via timer.
         """
         preview = text[:6] + "…" if len(text) > 6 else text
         log.debug("COPY called  text_len=%d preview=%s", len(text), preview)
 
         try:
-            subprocess.run(["wl-copy"], input=text, text=True, check=True)
+            subprocess.run(["wl-copy"], input=text, text=True, check=True,
+                           env=self._wl_copy_env())
             log.debug("COPY wl-copy (CLIPBOARD) done")
         except FileNotFoundError:
             log.error("wl-copy not found — install wl-clipboard: sudo apt install wl-clipboard")
@@ -585,7 +597,8 @@ class OpKeysyncApp:
             log.error("COPY wl-copy (CLIPBOARD) FAILED: %s", e)
 
         try:
-            subprocess.run(["wl-copy", "--primary"], input=text, text=True, check=True)
+            subprocess.run(["wl-copy", "--primary"], input=text, text=True, check=True,
+                           env=self._wl_copy_env())
             log.debug("COPY wl-copy (PRIMARY) done")
         except FileNotFoundError:
             pass  # PRIMARY clipboard optional — CLIPBOARD already copied above
@@ -631,8 +644,8 @@ class OpKeysyncApp:
             self._clipboard_timer = None
         self._clipboard_active = False
         try:
-            subprocess.run(["wl-copy", "--clear"], check=True)
-            subprocess.run(["wl-copy", "--clear", "--primary"], check=True)
+            subprocess.run(["wl-copy", "--clear"], check=True, env=self._wl_copy_env())
+            subprocess.run(["wl-copy", "--clear", "--primary"], check=True, env=self._wl_copy_env())
             log.debug("CLIPBOARD_CLEAR done — clipboard+primary cleared")
         except FileNotFoundError:
             log.error("wl-copy not found — clipboard was not cleared")
