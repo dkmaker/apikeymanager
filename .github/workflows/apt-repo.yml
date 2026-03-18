@@ -92,16 +92,22 @@ jobs:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
           cd gh-pages
-          # Detached signature (Release.gpg) + inline signed (InRelease)
-          echo "$GPG_PASSPHRASE" | gpg --batch --yes --passphrase-fd 0 \
-            --pinentry-mode loopback \
+          # Build passphrase args — omit entirely if passphrase is empty
+          if [[ -n "$GPG_PASSPHRASE" ]]; then
+            PASS_ARGS=(--pinentry-mode loopback --passphrase "$GPG_PASSPHRASE")
+          else
+            PASS_ARGS=(--batch)
+          fi
+
+          # Detached signature (Release.gpg)
+          gpg --yes "${PASS_ARGS[@]}" \
             --default-key "$GPG_FINGERPRINT" \
             --armor --detach-sign \
             --output dists/stable/Release.gpg \
             dists/stable/Release
 
-          echo "$GPG_PASSPHRASE" | gpg --batch --yes --passphrase-fd 0 \
-            --pinentry-mode loopback \
+          # Inline signed (InRelease)
+          gpg --yes "${PASS_ARGS[@]}" \
             --default-key "$GPG_FINGERPRINT" \
             --armor --clearsign \
             --output dists/stable/InRelease \
