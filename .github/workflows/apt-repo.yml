@@ -92,22 +92,19 @@ jobs:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
           cd gh-pages
-          # Build passphrase args — omit entirely if passphrase is empty
-          if [[ -n "$GPG_PASSPHRASE" ]]; then
-            PASS_ARGS=(--pinentry-mode loopback --passphrase "$GPG_PASSPHRASE")
-          else
-            PASS_ARGS=(--batch)
-          fi
+          # --pinentry-mode loopback is required in headless CI (no TTY)
+          # --passphrase "" works for keys with no passphrase
+          GPG_PASS="${GPG_PASSPHRASE:-}"
 
           # Detached signature (Release.gpg)
-          gpg --yes "${PASS_ARGS[@]}" \
+          gpg --batch --yes --pinentry-mode loopback --passphrase "$GPG_PASS" \
             --default-key "$GPG_FINGERPRINT" \
             --armor --detach-sign \
             --output dists/stable/Release.gpg \
             dists/stable/Release
 
           # Inline signed (InRelease)
-          gpg --yes "${PASS_ARGS[@]}" \
+          gpg --batch --yes --pinentry-mode loopback --passphrase "$GPG_PASS" \
             --default-key "$GPG_FINGERPRINT" \
             --armor --clearsign \
             --output dists/stable/InRelease \
