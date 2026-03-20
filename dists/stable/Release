@@ -6,10 +6,10 @@ Version: 1.0
 Architectures: all
 Components: main
 Description: op-keysync APT repository
-Date: Fri, 20 Mar 2026 15:14:32 +0000
+Date: Fri, 20 Mar 2026 15:20:15 +0000
 MD5Sum:
- eee90976a68a9ac81fd504174fdec21a 1101 main/binary-all/Packages
- e1b4f581cdb0aae3be7118606364d856 714 main/binary-all/Packages.gz
+ 99a9446315d1715d48b17bc2df7fb0c0 1101 main/binary-all/Packages
+ 74596ab0ee6d3f418d428b8d0b72a5d6 714 main/binary-all/Packages.gz
 SHA256:
- d7b76287e8b8d6715caf885dd80be0c02d776d2b491bd933d7dfa84e06ef31df 1101 main/binary-all/Packages
- 2ebaf2b52dec75e1b71270e66752ca0216c50f94dd41a81917d28d6891191f3b 714 main/binary-all/Packages.gz
+ 6665368b4590a2bfea57c41360b109d95fc9f870ff976541f317696f3ba0ebc6 1101 main/binary-all/Packages
+ 58af3bc0b2da3d06889f4d0f9aa31ca6ddad74842a91c32371b2a87696bcbc86 714 main/binary-all/Packages.gz
