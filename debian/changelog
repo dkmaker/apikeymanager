@@ -1,3 +1,17 @@
+op-keysync (1.1.0-1) stable; urgency=medium
+
+  * Silence non-error notifications — only sync failures and missing
+    dependency warnings are shown. State changes (lock, unlock, sync OK,
+    clipboard copy) are silent and reflected in the tray icon only.
+  * Fix tray icon flash — skip set_icon_full() when icon is unchanged.
+  * Fix dock flash on wl-copy — strip GIO_LAUNCHED_DESKTOP_FILE from
+    subprocess environment so GNOME does not show wl-copy in the dock.
+  * Add startup dependency check with tray menu warnings for missing tools.
+  * Thread safety — RLock protecting secrets between GTK and socket threads.
+  * Fix _do_unlock UI — tray updates immediately on unlock, not after sync.
+
+ -- op-keysync maintainer <noreply@github.com>  Thu, 19 Mar 2026 09:00:00 +0100
+
 op-keysync (1.0.0-1) stable; urgency=medium
 
   * Initial release.

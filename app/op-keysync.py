@@ -382,9 +382,7 @@ class OpKeysyncApp:
         _bump_version()
         self._update_icon()
         self._rebuild_menu()
-        self._notify(
-            f"⏱ Idle for {IDLE_TIMEOUT_MINUTES} min — API keys purged from all shells"
-        )
+        log.info("Idle timeout — keys purged")
 
     def _do_lock(self):
         with self._secrets_lock:
@@ -394,7 +392,7 @@ class OpKeysyncApp:
         _bump_version()
         self._update_icon()
         self._rebuild_menu()
-        self._notify("🔒 Screen locked — API keys purged from all shells")
+        log.info("Screen locked — keys purged")
 
 
     def _do_unlock(self):
@@ -438,7 +436,7 @@ class OpKeysyncApp:
         elif keys:
             self._store_keys(keys)
             _bump_version()   # shells will pick up new values on next prompt
-            self._notify(f"✅ {len(keys)} keys loaded — all local shells updated")
+            log.info("Sync OK — %d keys loaded", len(keys))
         else:
             # 1Password returned 0 items — vault empty or no matching fields
             self._notify("⚠️ No keys found — check your Exports vault has items with 'env' and 'credential' fields")
@@ -610,12 +608,12 @@ class OpKeysyncApp:
     def _on_copy_value(self, _item, name: str, value: str):
         log.debug("CLICK Copy value: %s", name)
         self._copy_to_clipboard(value)
-        self._notify(f"📋 {name} — value copied  (clears in 20s)")
+        log.debug("Copied value for %s to clipboard", name)
 
     def _on_copy_kv(self, _item, name: str, value: str):
         log.debug("CLICK Copy KEY=VALUE: %s", name)
         self._copy_to_clipboard(f"{name}={value}")
-        self._notify(f"📋 {name}=VALUE copied  (clears in 20s)")
+        log.debug("Copied KEY=VALUE for %s to clipboard", name)
 
     def _clipboard_start(self):
         """Mark clipboard active, show paste icon, start 60s fallback timer."""
