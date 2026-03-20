@@ -9,26 +9,26 @@ Version: 1.0
 Architectures: all
 Components: main
 Description: op-keysync APT repository
-Date: Fri, 20 Mar 2026 15:20:15 +0000
+Date: Fri, 20 Mar 2026 15:24:14 +0000
 MD5Sum:
- 99a9446315d1715d48b17bc2df7fb0c0 1101 main/binary-all/Packages
- 74596ab0ee6d3f418d428b8d0b72a5d6 714 main/binary-all/Packages.gz
+ d9b576d3e44928329aff2fe00c8c5474 1101 main/binary-all/Packages
+ 7cc82635d3129c6282bbbdf080aac76b 714 main/binary-all/Packages.gz
 SHA256:
- 6665368b4590a2bfea57c41360b109d95fc9f870ff976541f317696f3ba0ebc6 1101 main/binary-all/Packages
- 58af3bc0b2da3d06889f4d0f9aa31ca6ddad74842a91c32371b2a87696bcbc86 714 main/binary-all/Packages.gz
+ 8db3b1fd223ae883e9515991d6e510667cc0010fd3dcff6d86fabaf872825a9d 1101 main/binary-all/Packages
+ b2522b3436127f107f6d26745d9875887796db107ff247c76b95e501bcace650 714 main/binary-all/Packages.gz
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEEuniwCTNzZlwHamopvCnCYPbjltcFAmm9ZbAACgkQvCnCYPbj
-ltdcmg//dJPiq0TM8EcYRu7UDrfwUZvAZLcgoef5cIdKtB9BViubQ9vI7VuywRVS
-shk6GN0c2v/b0+xW2TiUhNZSfXPC5XDWin/lmGn+A2XfLAHZLQ+0Q1detYUs56HL
-i64VH3/gePUBl6tupxpdvfKfp1d7w9jupZaVO5qln6xNzVkW5Lv2gke+t9O9Gder
-lUPTTUEhzQy6/xA+Ke8PfqxeY6GSKqc1rxyG8ExNp/4JaEtXbdu1qds6mQYzk4Nb
-i1DJghvu8qTlclWevWfwKEB/aAECn2B4Do3eAiGv1MPixPdR1U9RLTOS5J5u8T7S
-FBtQ9E4ZmTsLDpXmI1dxF2chKJd2aoGDlQ8TMjoj+l7nW0qdhkjnMpPcqjVIesjb
-hxHzo5IMGJAVkgYZ4xe88jkjl9B6ohbXodi5qpZmKvkE8K2S5cqnF2Q5JLKaplFG
-ppXRjnlKJBgZw9A2a4MQJ7DBWX0gWXclrSJiqvmeDP0oYz7y4z61yAFLUSbuBHWj
-Vyyw4mx2EMp1R+py8/ufdv00EEd9buhYXpTM8pNISC1H0H2pi1W5K1QCckXnX+ue
-hfQ19kH2JdGIQ0Q4DbhoVLUBiOsAkxYGp9y7gLLYZofWbs+ppKCfPI7V2Ll/ePB4
-l3SA2yMmf7UbtFiSlY1DQ1dLwhspvrqtL8eiREQ2K6TdzPlGd+8=
-=F7Im
+iQIzBAEBCgAdFiEEuniwCTNzZlwHamopvCnCYPbjltcFAmm9Zp8ACgkQvCnCYPbj
+ltfEzQ/+KeH1uOBFufhFuvWd0APekwvz6WzW7U2WjVXpty2dJo5TOS+zy5lrkX4D
+UtPktswgDz2lH/mZEyJZo9A/pW/EDRfZI1FYV2MCUAXYHtTKTAOGOZbjVO9sVQmc
+pDA52ciBDH6YrH+S4chs9efG4UBx88I2CzKSmjrks1QxpPs58cV3caHT3Kglbqs8
+1dgHlaPh/0oA8YOgE/HA9suqjg+smLpGKx1+wSheE23F4qkyT/5osfgqy1d3lc/B
+NDMLSmu1kjwNL6bjW+y3RDMpl0tL5vuf5nZ2eMCp2041FDTBZ2b4gY8zaVUuCCAK
+2jjzEzJ3hWXU1QMBa23OuWrIoevcCZqkYZ54HShVMJD3sXGQN1jVAt9B1Kset9W3
+fdO7SJ2PSIpp/XiZnlueIswI2ob3+Hipy7yksNQxEPC59zKMmH4Yn83Aq45dpe4E
+yyyl7qaDEluaqLR+hblOo4mVs1rgUgyK1OUdeIZiIO0g8VWmtmwObPeMBwHZ9eG8
+XwsLWBFikpACJBLjEKJii3+Wks4fkjICVEmsyhOuSH5Q8L/Et4DlxXhTnZvmLJVV
+NRkEofiY71RP4GW80+hFk4EMDzcJ1GSHKgcvRfik3/42bclyX4iWX3YEREZCKKl5
+iLaGbWbBSiOPDcCYRbXVIvsmhtXBtMB9fK9SexBFkknZdFa9h9c=
+=D9G5
 -----END PGP SIGNATURE-----
