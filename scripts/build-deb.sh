@@ -68,7 +68,8 @@ EOF
 
 cp "$REPO_ROOT/debian/postinst"  "$STAGE/DEBIAN/"
 cp "$REPO_ROOT/debian/postrm"    "$STAGE/DEBIAN/"
-chmod 755 "$STAGE/DEBIAN/postinst" "$STAGE/DEBIAN/postrm"
+cp "$REPO_ROOT/debian/prerm"     "$STAGE/DEBIAN/"
+chmod 755 "$STAGE/DEBIAN/postinst" "$STAGE/DEBIAN/postrm" "$STAGE/DEBIAN/prerm"
 
 # ── Build .deb ─────────────────────────────────────────────────────────────────
 DEB_FILE="$BUILD_DIR/${PKG_NAME}.deb"

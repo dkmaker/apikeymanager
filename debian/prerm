@@ -1,0 +1,24 @@
+#!/bin/bash
+set -e
+
+# Kill any running op-keysync process before upgrade or removal.
+# We do NOT restart it — op-keysync must be started in user context
+# (needs WAYLAND_DISPLAY, DBUS_SESSION_BUS_ADDRESS etc.) which is not
+# available here. The autostart entry will relaunch it on next login.
+
+case "$1" in
+    upgrade|remove|purge)
+        # Find all processes running op-keysync.py and kill them gracefully
+        PIDS=$(pgrep -f "op-keysync.py" 2>/dev/null || true)
+        if [[ -n "$PIDS" ]]; then
+            echo "op-keysync: stopping running instance (will restart on next login)..."
+            kill -TERM $PIDS 2>/dev/null || true
+            # Give it 3 seconds to exit cleanly, then force-kill
+            sleep 3
+            kill -KILL $PIDS 2>/dev/null || true
+            echo "op-keysync: stopped."
+        fi
+        ;;
+esac
+
+exit 0
