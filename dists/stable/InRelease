@@ -9,26 +9,26 @@ Version: 1.0
 Architectures: all
 Components: main
 Description: op-keysync APT repository
-Date: Fri, 20 Mar 2026 15:24:14 +0000
+Date: Fri, 27 Mar 2026 10:04:59 +0000
 MD5Sum:
- d9b576d3e44928329aff2fe00c8c5474 1101 main/binary-all/Packages
- 7cc82635d3129c6282bbbdf080aac76b 714 main/binary-all/Packages.gz
+ 18f1fd1bef420cdb77e0e79994e75bfd 1101 main/binary-all/Packages
+ 662b351d45894ec21b9bc65e31c5a7c2 714 main/binary-all/Packages.gz
 SHA256:
- 8db3b1fd223ae883e9515991d6e510667cc0010fd3dcff6d86fabaf872825a9d 1101 main/binary-all/Packages
- b2522b3436127f107f6d26745d9875887796db107ff247c76b95e501bcace650 714 main/binary-all/Packages.gz
+ cc49838d7e9a6d3b8a87e12af80fbe9fd71ea8554ea5d35148e8fca487c5eba0 1101 main/binary-all/Packages
+ 41d77f94f2c8ac3ae6a0fb61032d8dcdc75351e2d10e955049553c19bd69bae6 714 main/binary-all/Packages.gz
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEEuniwCTNzZlwHamopvCnCYPbjltcFAmm9Zp8ACgkQvCnCYPbj
-ltfEzQ/+KeH1uOBFufhFuvWd0APekwvz6WzW7U2WjVXpty2dJo5TOS+zy5lrkX4D
-UtPktswgDz2lH/mZEyJZo9A/pW/EDRfZI1FYV2MCUAXYHtTKTAOGOZbjVO9sVQmc
-pDA52ciBDH6YrH+S4chs9efG4UBx88I2CzKSmjrks1QxpPs58cV3caHT3Kglbqs8
-1dgHlaPh/0oA8YOgE/HA9suqjg+smLpGKx1+wSheE23F4qkyT/5osfgqy1d3lc/B
-NDMLSmu1kjwNL6bjW+y3RDMpl0tL5vuf5nZ2eMCp2041FDTBZ2b4gY8zaVUuCCAK
-2jjzEzJ3hWXU1QMBa23OuWrIoevcCZqkYZ54HShVMJD3sXGQN1jVAt9B1Kset9W3
-fdO7SJ2PSIpp/XiZnlueIswI2ob3+Hipy7yksNQxEPC59zKMmH4Yn83Aq45dpe4E
-yyyl7qaDEluaqLR+hblOo4mVs1rgUgyK1OUdeIZiIO0g8VWmtmwObPeMBwHZ9eG8
-XwsLWBFikpACJBLjEKJii3+Wks4fkjICVEmsyhOuSH5Q8L/Et4DlxXhTnZvmLJVV
-NRkEofiY71RP4GW80+hFk4EMDzcJ1GSHKgcvRfik3/42bclyX4iWX3YEREZCKKl5
-iLaGbWbBSiOPDcCYRbXVIvsmhtXBtMB9fK9SexBFkknZdFa9h9c=
-=D9G5
+iQIzBAEBCgAdFiEEuniwCTNzZlwHamopvCnCYPbjltcFAmnGVkwACgkQvCnCYPbj
+ltfJNg//Sai+z5ZyV/kXmiWMVr7kOLqSOfw0OLqeH8tjH7FIvcpw7W70upwn8bIF
+MZKzUAHBBIbgCAUHa/8ze9PfbkTMj2dpZw+VfTgRwOnMTL8ItGXqQS0EoLHAu0qx
+RLr7bzj+oZ9ctJ2LeTc+Kp1l26+YXlqNOy/Td3TB2AF5+UBz2W2rTAMNUYXIhfEQ
+fmeJxjEb+AjOdHN9vcABHgV0R6NUuvE9jKzTsqUA3xFjakFo0I3WylUdskL9Wcvi
+1n96rVEuou4zu1YOtu9y3DBuKwhvNqQViyleHwBfMidQ5zrMeUu3gqFjmatymsDK
+qfY1f2foWNoudvjoGYm/ZZJdD963rEdwtSYOO9GfmHiGsC1EikyPJcjnsR1tsPbL
+F4yYBg5iDtLelByyju91K5sG+cB9u8Pthh25j7UhxDSOtFIjb3tm4o7naogCcMef
+fqE8XSQZahrM8SzLfQNmZHzZVYEFDQ8Jz6vC1wqIZQAvYxZEwIIl0972/UROZVVA
+hNFm41iVdiSuXtQaOZSfTmNgJdH9vzzYgE2eIorKC/kNzFst//9mArTgyN4FDhZd
+r59UKhRpg3ImEwjC6F9U1P7POE+s8BNyqLt0Wn1CfuwvYFXLjZaXJ4mWuHMSvP6F
+6HVLExHwzb/2nvUSP2qKm0Id+SmOXnPQf8C28Ndf5L8lc83Xe+s=
+=YB7j
 -----END PGP SIGNATURE-----
